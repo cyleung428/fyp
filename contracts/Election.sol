@@ -9,7 +9,7 @@ contract Election {
     bool end;
 
     // Constructor
-    function ElectionContract() public {
+    constructor() public {
         admin = msg.sender;
         candidateCount = 0;
         voterCount = 0;
@@ -64,7 +64,8 @@ contract Election {
         address voterAddress;
         string name;
         string hkid;
-        string imgAddress;
+        string hkidPhotoHash;
+        string addressPhotoHash;
         uint256 constituency;
         bool hasVoted;
         bool isVerified;
@@ -72,17 +73,19 @@ contract Election {
     address[] public voters;
     mapping(address => Voter) public voterDetails;
 
-    // request to be added as voter
-    function requestVoter(
+    // register to be added as voter
+    function registerVoter(
         string memory _name,
         string memory _hkid,
         uint256 _constituency,
-        string memory _imgAddress
+        string memory _hkidHash,
+        string memory _addressHash
     ) public {
         Voter memory newVoter =
             Voter({
                 voterAddress: msg.sender,
-                imgAddress: _imgAddress,
+                hkidPhotoHash: _hkidHash,
+                addressPhotoHash: _addressHash,
                 name: _name,
                 hkid: _hkid,
                 constituency: _constituency,
