@@ -1,29 +1,29 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.21 <0.7.0;
 
-contract Ballot {
-    address public owner;
+contract Election {
+    address public admin;
     uint256 candidateCount;
     uint256 voterCount;
     bool start;
     bool end;
 
     // Constructor
-    function MasoomContract() public {
-        owner = msg.sender;
+    function ElectionContract() public {
+        admin = msg.sender;
         candidateCount = 0;
         voterCount = 0;
         start = false;
         end = false;
     }
 
-    function getOwner() public view returns (address) {
-        return owner;
+    function getAdmin() public view returns (address) {
+        return admin;
     }
 
     // Only Admin can access
     modifier onlyAdmin() {
-        require(msg.sender == owner);
+        require(msg.sender == admin);
         _;
     }
     struct Candidate {
@@ -36,7 +36,6 @@ contract Ballot {
     }
     mapping(uint256 => Candidate) public candidateDetails;
 
-    // Only admin can add candidate
     function addCandidate(
         string memory _name,
         string memory _party,
@@ -64,7 +63,8 @@ contract Ballot {
     struct Voter {
         address voterAddress;
         string name;
-        string aadhar;
+        string hkid;
+        string imgAddress;
         uint256 constituency;
         bool hasVoted;
         bool isVerified;
@@ -75,14 +75,16 @@ contract Ballot {
     // request to be added as voter
     function requestVoter(
         string memory _name,
-        string memory _aadhar,
-        uint256 _constituency
+        string memory _hkid,
+        uint256 _constituency,
+        string memory _imgAddress
     ) public {
         Voter memory newVoter =
             Voter({
                 voterAddress: msg.sender,
+                imgAddress: _imgAddress,
                 name: _name,
-                aadhar: _aadhar,
+                hkid: _hkid,
                 constituency: _constituency,
                 hasVoted: false,
                 isVerified: false
