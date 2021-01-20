@@ -77,7 +77,7 @@ export default function App() {
                 <div className={bodyStyles}>
                     <Switch>
                         <Route path="/register">
-                            <Register />
+                            <Register isAdmin={isAdmin} web3={web3} account={account} electionInstance={electionInstance}/>
                         </Route>
                         <Route path="/">
                             <Home account={account} isAdmin={isAdmin} />

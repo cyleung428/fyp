@@ -29,7 +29,8 @@ const constituencies = [
 ];
 const dropdownStyles = { dropdown: { width: 300 } };
 
-export default function Register() {
+export default function Register(props) {
+    const { account, electionInstance, web3, isAdmin } = props
     const [name, setName] = useState("");
     const [hkid, setHkid] = useState("");
     const [constituency, setConstituency] = useState();
@@ -90,6 +91,7 @@ export default function Register() {
             setLoading(true);
             const hkidHash = await ipfs.add(hkidBuffer);
             const addressHash = await ipfs.add(addressBuffer);
+            await electionInstance.methods.registerVoter(name, hkid, constituency.key, hkidHash.path, addressHash.path).send({ from: account, gas: 1000000 });
             setSuccessMsg("Successfully upload");
             setLoading(false);
         } catch (error) {
@@ -110,69 +112,73 @@ export default function Register() {
 
 
     return (
-        <div className={pageStyle}>
-            <Stack
-                horizontal
-                tokens={stackTokens}
-                styles={stackStyles}
-            >
+        isAdmin ? <div>
+            Only voters can register
+        </div> :
+            <div className={pageStyle}>
+                <Stack
+                    horizontal
+                    tokens={stackTokens}
+                    styles={stackStyles}
+                >
 
-                <Stack {...columnProps}>
-                    <form
-                        id="signup"
-                        onSubmit={onSubmut}
-                    >
-                        <TextField
-                            name="name"
-                            label="Full name"
-                            value={name}
-                            onChange={nameOnChange}
-                        />
-                        <TextField
-                            name="hkid"
-                            label="HKID number"
-                            value={hkid}
-                            onChange={hkidOnChange}
-                        />
-                        <Dropdown
-                            label="Constituency"
-                            selectedKey={constituency ? constituency.key : undefined}
-                            onChange={constituencyOnChange}
-                            placeholder="Select an constituency"
-                            options={constituencies}
-                            styles={dropdownStyles}
-                        />
-                        <div className={labelStyle}>
-                            HKID card upload
+                    <Stack {...columnProps}>
+                        <form
+                            id="signup"
+                            onSubmit={onSubmut}
+                        >
+                            <TextField
+                                name="name"
+                                label="Full name"
+                                value={name}
+                                onChange={nameOnChange}
+                            />
+                            <TextField
+                                name="hkid"
+                                label="HKID number"
+                                value={hkid}
+                                onChange={hkidOnChange}
+                            />
+                            <Dropdown
+                                label="Constituency"
+                                selectedKey={constituency ? constituency.key : undefined}
+                                onChange={constituencyOnChange}
+                                placeholder="Select an constituency"
+                                options={constituencies}
+                                styles={dropdownStyles}
+                            />
+                            <div className={labelStyle}>
+                                HKID card upload
                         </div>
-                        <input
-                            label="HKID card upload"
-                            type="file"
-                            onChange={captureHkid}
-                            accept="image/png, image/jpeg"
-                        />
-                        <div className={labelStyle}>
-                            address proof upload
+                            <input
+                                label="HKID card upload"
+                                type="file"
+                                onChange={captureHkid}
+                                accept="image/png, image/jpeg"
+                            />
+                            <div className={labelStyle}>
+                                address proof upload
                         </div>
-                        <input
-                            label="HKID card upload"
-                            type="file"
-                            accept=".pdf"
-                            onChange={captureAddressProof}
-                        />
-                        <div>
-                            <PrimaryButton
-                                type="submit"
-                                className={buttonStyle}
-                                text="Register"
-                            ></PrimaryButton>
-                        </div>
-                        <div className={successMsgStyle}> {successMsg}</div>
-                    </form>
+                            <input
+                                label="HKID card upload"
+                                type="file"
+                                accept=".pdf"
+                                onChange={captureAddressProof}
+                            />
+                            <div>
+                                <PrimaryButton
+                                    disabled={loading}
+                                    type="submit"
+                                    className={buttonStyle}
+                                    text="Register"
+                                ></PrimaryButton>
+                            </div>
+                            <div className={successMsgStyle}> {successMsg}</div>
+                        </form>
+                    </Stack>
+
                 </Stack>
-
-            </Stack>
-        </div>
+            </div>
     )
 }
 
