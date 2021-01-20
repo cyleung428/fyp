@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Home from "./components/Home";
-import { NavBar } from './components/Nav';
+import Register from "./components/Register";
+import { SideBar } from './components/SideBar';
 import ElectionContract from "./contracts/Election.json";
 import getWeb3 from "./getWeb3";
 import { mergeStyles } from '@fluentui/react';
@@ -41,10 +42,6 @@ export default function App() {
                 setAccount(accounts[0]);
             })
 
-            if (!window.location.hash) {
-                window.location = window.location + '#loaded';
-                window.location.reload();
-            }
         } catch (error) {
             // Catch any errors for any of the above operations.
             alert(
@@ -74,19 +71,21 @@ export default function App() {
         return <div>Loading Web3, accounts, and contract...</div>;
     }
     return (
-        <div className={appStyles}>
-            <div className={navStyles}>
-                <NavBar />
-            </div>
-            <div className={bodyStyles}>
-                <Router>
+        <Router>
+            <div className={appStyles}>
+                <SideBar />
+                <div className={bodyStyles}>
                     <Switch>
+                        <Route path="/register">
+                            <Register />
+                        </Route>
                         <Route path="/">
-                            <Home />
+                            <Home account={account} isAdmin={isAdmin} />
                         </Route>
                     </Switch>
-                </Router>
+
+                </div>
             </div>
-        </div>
+        </Router>
     )
 }

@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { } from "react";
 
-function Home() {
-  
+function Home(props) {
+  const { account, isAdmin } = props;
   return (
     <div>
       <div>
         Home
       <div>
-          Your user address is 
+          Your address is {account}
         </div>
       </div>
 
