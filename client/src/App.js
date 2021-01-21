@@ -6,6 +6,7 @@ import { SideBar } from './components/SideBar';
 import ElectionContract from "./contracts/Election.json";
 import getWeb3 from "./getWeb3";
 import { mergeStyles } from '@fluentui/react';
+import { Verify } from './components/Verify';
 
 const appStyles = mergeStyles({
     display: "flex",
@@ -77,7 +78,10 @@ export default function App() {
                 <div className={bodyStyles}>
                     <Switch>
                         <Route path="/register">
-                            <Register isAdmin={isAdmin} web3={web3} account={account} electionInstance={electionInstance}/>
+                            <Register isAdmin={isAdmin} account={account} electionInstance={electionInstance}/>
+                        </Route>
+                        <Route path="/verify">
+                            <Verify isAdmin={isAdmin} account={account} electionInstance={electionInstance}/>
                         </Route>
                         <Route path="/">
                             <Home account={account} isAdmin={isAdmin} />

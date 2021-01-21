@@ -30,7 +30,7 @@ const constituencies = [
 const dropdownStyles = { dropdown: { width: 300 } };
 
 export default function Register(props) {
-    const { account, electionInstance, web3, isAdmin } = props
+    const { account, electionInstance, isAdmin } = props
     const [name, setName] = useState("");
     const [hkid, setHkid] = useState("");
     const [constituency, setConstituency] = useState();
@@ -93,6 +93,7 @@ export default function Register(props) {
             const addressHash = await ipfs.add(addressBuffer);
             await electionInstance.methods.registerVoter(name, hkid, constituency.key, hkidHash.path, addressHash.path).send({ from: account, gas: 1000000 });
             setSuccessMsg("Successfully upload");
+            window.location.reload()
             setLoading(false);
         } catch (error) {
             console.log(error);
@@ -162,7 +163,7 @@ export default function Register(props) {
                             <input
                                 label="HKID card upload"
                                 type="file"
-                                accept=".pdf"
+                                accept="image/png, image/jpeg"
                                 onChange={captureAddressProof}
                             />
                             <div>
