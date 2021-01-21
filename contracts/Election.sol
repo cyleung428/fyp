@@ -5,8 +5,7 @@ contract Election {
     address public admin;
     uint256 candidateCount;
     uint256 voterCount;
-    bool start;
-    bool end;
+    bool running;
 
     // Constructor
     constructor() public {
@@ -23,8 +22,7 @@ contract Election {
         admin = msg.sender;
         candidateCount = 0;
         voterCount = 0;
-        start = false;
-        end = false;
+        running = false;
     }
 
     function getAdmin() public view returns (address) {
@@ -120,27 +118,22 @@ contract Election {
         require(voterDetails[msg.sender].hasVoted == false);
         require(voterDetails[msg.sender].isVerified == true);
         require(voterDetails[msg.sender].constituency == candidateDetails[candidateId].constituency);
-        require(start == true);
-        require(end == false);
+        require(running == true);
         candidateDetails[candidateId].voteCount += 1;
         voterDetails[msg.sender].hasVoted = true;
     }
 
     function startElection() public onlyAdmin {
-        start = true;
-        end = false;
+        require(running == false);
+        running = true;
     }
 
     function endElection() public onlyAdmin {
-        end = true;
-        start = false;
+        require(running == true);
+        running = false;
     }
 
-    function getStart() public view returns (bool) {
-        return start;
-    }
-
-    function getEnd() public view returns (bool) {
-        return end;
+    function getRunning() public view returns (bool) {
+        return running;
     }
 }
