@@ -9,16 +9,6 @@ contract Election {
 
     // Constructor
     constructor() public {
-        addCandidate("Candidate 1", "A Party", "Just a sample", 0);
-        addCandidate("Candidate 2", "B Party", "Just a sample", 0);
-        addCandidate("Candidate 3", "C Party", "Just a sample", 0);
-        addCandidate("Candidate 4", "D Party", "Just a sample", 0);
-        addCandidate("Candidate 5", "A Party", "Just a sample", 1);
-        addCandidate("Candidate 6", "A Party", "Just a sample", 2);
-        addCandidate("Candidate 7", "B Party", "Just a sample", 1);
-        addCandidate("Candidate 8", "B Party", "Just a sample", 2);
-        addCandidate("Candidate 9", "C Party", "Just a sample", 1);
-        addCandidate("Candidate 10", "D Party", "Just a sample", 2);
         admin = msg.sender;
         candidateCount = 0;
         voterCount = 0;

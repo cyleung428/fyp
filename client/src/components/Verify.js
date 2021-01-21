@@ -55,7 +55,6 @@ export const Verify = (props) => {
     ];
 
     const verifyVoter = async (address) => {
-        console.log(address);
         try {
             await electionInstance.methods.verifyVoter(address).send({ from: account });
             window.location.reload();

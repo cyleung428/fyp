@@ -7,6 +7,8 @@ import ElectionContract from "./contracts/Election.json";
 import getWeb3 from "./getWeb3";
 import { mergeStyles } from '@fluentui/react';
 import { Verify } from './components/Verify';
+import { Admin } from './components/Admin';
+import { AddCandidate } from './components/AddCandidate';
 
 const appStyles = mergeStyles({
     display: "flex",
@@ -28,7 +30,7 @@ export default function App() {
     const [electionInstance, setElectionInstance] = useState(null);
 
     useEffect(() => {
-        if (admin === account || admin.toLocaleLowerCase() === account.toLocaleLowerCase()) {
+        if (admin && account && (admin === account || admin.toLocaleLowerCase() === account.toLocaleLowerCase())) {
             setIsAdmin(true);
         } else {
             setIsAdmin(false);
@@ -82,6 +84,12 @@ export default function App() {
                         </Route>
                         <Route path="/verify">
                             <Verify isAdmin={isAdmin} account={account} electionInstance={electionInstance}/>
+                        </Route>
+                        <Route path="/admin">
+                            <Admin isAdmin={isAdmin} account={account} electionInstance={electionInstance}/>
+                        </Route>
+                        <Route path="/addCandidate">
+                            <AddCandidate isAdmin={isAdmin} account={account} electionInstance={electionInstance}/>
                         </Route>
                         <Route path="/">
                             <Home account={account} isAdmin={isAdmin} />

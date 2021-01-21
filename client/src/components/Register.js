@@ -91,7 +91,7 @@ export default function Register(props) {
             setLoading(true);
             const hkidHash = await ipfs.add(hkidBuffer);
             const addressHash = await ipfs.add(addressBuffer);
-            await electionInstance.methods.registerVoter(name, hkid, constituency.key, hkidHash.path, addressHash.path).send({ from: account, gas: 1000000 });
+            await electionInstance.methods.registerVoter(name, hkid, constituency.key, hkidHash.path, addressHash.path).send({ from: account });
             setSuccessMsg("Successfully upload");
             window.location.reload()
             setLoading(false);
@@ -102,7 +102,7 @@ export default function Register(props) {
         }
     }
 
-    const onSubmut = (event) => {
+    const onSubmit = (event) => {
         event.preventDefault();
         if (!name || !hkid || !constituency || !addressBuffer || !hkidBuffer) {
             setSuccessMsg("Missing input field");
@@ -126,7 +126,7 @@ export default function Register(props) {
                     <Stack {...columnProps}>
                         <form
                             id="signup"
-                            onSubmit={onSubmut}
+                            onSubmit={onSubmit}
                         >
                             <TextField
                                 name="name"
