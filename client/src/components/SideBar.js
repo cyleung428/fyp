@@ -29,6 +29,9 @@ export const SideBar = () => {
             <NavLink to="/register" className={sideBarItemStyles} >
                 <div className={textStyles}>Register</div>
             </NavLink>
+            <NavLink to="/vote" className={sideBarItemStyles} >
+                <div className={textStyles}>Vote</div>
+            </NavLink>
             <NavLink to="/verify" className={sideBarItemStyles} >
                 <div className={textStyles}>Verify voters</div>
             </NavLink>

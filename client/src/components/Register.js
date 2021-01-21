@@ -23,9 +23,9 @@ const labelStyle = mergeStyles({
 })
 
 const constituencies = [
-    { key: 0, text: 'District 1' },
-    { key: 1, text: 'District 2' },
-    { key: 2, text: 'District 3' },
+    { key: 0, text: 'District 0' },
+    { key: 1, text: 'District 1' },
+    { key: 2, text: 'District 2' },
 ];
 const dropdownStyles = { dropdown: { width: 300 } };
 

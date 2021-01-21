@@ -9,6 +9,7 @@ import { mergeStyles } from '@fluentui/react';
 import { Verify } from './components/Verify';
 import { Admin } from './components/Admin';
 import { AddCandidate } from './components/AddCandidate';
+import Vote from './components/Vote';
 
 const appStyles = mergeStyles({
     display: "flex",
@@ -81,6 +82,9 @@ export default function App() {
                     <Switch>
                         <Route path="/register">
                             <Register isAdmin={isAdmin} account={account} electionInstance={electionInstance}/>
+                        </Route>
+                        <Route path="/vote">
+                            <Vote isAdmin={isAdmin} account={account} electionInstance={electionInstance}/>
                         </Route>
                         <Route path="/verify">
                             <Verify isAdmin={isAdmin} account={account} electionInstance={electionInstance}/>
