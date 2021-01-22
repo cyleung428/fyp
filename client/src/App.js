@@ -12,6 +12,8 @@ import { AddCandidate } from './components/AddCandidate';
 import Vote from './components/Vote';
 import { Result } from './components/Result';
 import { SideBarAdmin } from './components/SideBarAdmin';
+import { Nav } from './components/Nav';
+
 
 const appStyles = mergeStyles({
     display: "flex",
@@ -22,6 +24,7 @@ const navStyles = mergeStyles({
 })
 const bodyStyles = mergeStyles({
     display: "flex",
+    marginTop: "80px",
     width: "calc(100% - 324px)"
 })
 
@@ -78,6 +81,7 @@ export default function App() {
     }
     return (
         <Router>
+            <Nav />
             <div className={appStyles}>
                 {
                     isAdmin?<SideBarAdmin />:<SideBar />

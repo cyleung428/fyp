@@ -1,16 +1,20 @@
 import React, { } from "react";
+import { mergeStyles, Stack, TextField, PrimaryButton, Dropdown } from '@fluentui/react'
+
+
+const pageStyle = mergeStyles({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  width: "100%",
+});
+
 
 function Home(props) {
   const { account, isAdmin } = props;
   return (
-    <div>
-      <div>
-        Home
-      <div>
-          Your address is {account}
-        </div>
-      </div>
-
+    <div className={pageStyle}>
+          Welcome to Election Panel, {account}
     </div>
   );
 }

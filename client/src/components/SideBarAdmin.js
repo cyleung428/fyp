@@ -3,15 +3,14 @@ import { mergeStyles } from '@fluentui/react';
 import { NavLink } from 'react-router-dom';
 
 const sideBarStyles = mergeStyles({
-    background: "#c34a36",
     width: "250px",
-    height: "100vh",
+    height: "calc( 100vh - 80px )",
     position: "sticky",
-    top: "0"
+    paddingTop: "80px",
+    boxShadow: "0px 4px 25px 0px rgba(0, 0, 0, 0.15)",
 })
 const sideBarItemStyles = mergeStyles({
     textDecoration: 'none',
-    color: "white",
     fontWeight: "bold",
 })
 
