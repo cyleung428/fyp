@@ -22,7 +22,7 @@ export const Admin = (props) => {
 
     const getRunning = async (electionInstance) => {
         if (electionInstance) {
-            let running = await electionInstance.methods.getRunning().call();
+            let running = await electionInstance.methods.running().call();
             setRunning(running);
         }
     }

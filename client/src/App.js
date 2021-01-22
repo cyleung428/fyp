@@ -67,7 +67,7 @@ export default function App() {
         setWeb3(web3);
         setAccount(accounts[0]);
         setElectionInstance(electionInstance);
-        const admin = await electionInstance.methods.getAdmin().call();
+        const admin = await electionInstance.methods.admin().call();
         setAdmin(admin);
     }
 

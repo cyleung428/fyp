@@ -32,7 +32,7 @@ const Vote = (props) => {
     const getVoterInfo = async () => {
         if (electionInstance) {
             let voterInfo = await electionInstance.methods.voterDetails(account).call();
-            let running = await electionInstance.methods.getRunning().call();
+            let running = await electionInstance.methods.running().call();
             setRunning(running);
             setVoterInfo(voterInfo);
         }
@@ -41,7 +41,7 @@ const Vote = (props) => {
     const getAllCandidates = async () => {
         if (electionInstance) {
             let candidateList = [];
-            let candidateCount = await electionInstance.methods.getCandidateNumber().call();
+            let candidateCount = await electionInstance.methods.candidateCount().call();
             for (let i = 0; i < candidateCount; i++) {
                 let candidateDetails = await electionInstance.methods.candidateDetails(i).call();
                 candidateList.push(candidateDetails);
@@ -83,14 +83,6 @@ const Vote = (props) => {
                                 <DocumentCardDetails>
                                     <DocumentCardTitle title={candidate.candidateId+ ": "+candidate.name} shouldTruncate />
                                 </DocumentCardDetails>
-                                <DocumentCardStatus statusIcon="attach" status={candidate.party} />
-                                <DocumentCardTitle
-                                    title={
-                                        candidate.manifesto
-                                    }
-                                    shouldTruncate
-                                    showAsSecondaryTitle
-                                />
                             </DocumentCard>)
                     }
                 </div>

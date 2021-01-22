@@ -33,7 +33,7 @@ export const Verify = (props) => {
             return [];
         } else {
             let voters = [];
-            const count = await electionInstance.methods.getVoterCount().call();
+            const count = await electionInstance.methods.voterCount().call();
             for (let i = 0; i < count; i++) {
                 const address = await electionInstance.methods.voters(i).call();
                 const details = await electionInstance.methods.voterDetails(address).call();

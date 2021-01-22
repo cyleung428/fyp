@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.21 <0.7.0;
 
+
 contract Election {
     address public admin;
-    uint256 candidateCount;
-    uint256 voterCount;
-    bool running;
+    uint256 public candidateCount;
+    uint256 public voterCount;
+    bool public running;
 
     // Constructor
     constructor() public {
@@ -19,43 +20,30 @@ contract Election {
         return admin;
     }
 
-    // Only Admin can access
-    modifier onlyAdmin() {
-        require(msg.sender == admin);
-        _;
-    }
     struct Candidate {
         string name;
-        string party;
-        string manifesto;
         uint256 voteCount;
         uint256 constituency;
         uint256 candidateId;
     }
     mapping(uint256 => Candidate) public candidateDetails;
 
+
+
     function addCandidate(
         string memory _name,
-        string memory _party,
-        string memory _manifesto,
         uint256 _constituency
-    ) public onlyAdmin {
+    ) public {
+        require(msg.sender == admin);
         Candidate memory newCandidate =
             Candidate({
                 name: _name,
-                party: _party,
-                manifesto: _manifesto,
                 voteCount: 0,
                 constituency: _constituency,
                 candidateId: candidateCount
             });
         candidateDetails[candidateCount] = newCandidate;
         candidateCount += 1;
-    }
-
-    // get total number of candidates
-    function getCandidateNumber() public view returns (uint256) {
-        return candidateCount;
     }
 
     struct Voter {
@@ -95,35 +83,33 @@ contract Election {
         voterCount += 1;
     }
 
-    // get total number of voters
-    function getVoterCount() public view returns (uint256) {
-        return voterCount;
-    }
-
-    function verifyVoter(address _address) public onlyAdmin {
+    function verifyVoter(address _address) public {
+        require(msg.sender == admin);
         voterDetails[_address].isVerified = true;
     }
 
     function vote(uint256 candidateId) public {
         require(voterDetails[msg.sender].hasVoted == false);
         require(voterDetails[msg.sender].isVerified == true);
-        require(voterDetails[msg.sender].constituency == candidateDetails[candidateId].constituency);
+        require(
+            voterDetails[msg.sender].constituency ==
+                candidateDetails[candidateId].constituency
+        );
         require(running == true);
         candidateDetails[candidateId].voteCount += 1;
         voterDetails[msg.sender].hasVoted = true;
     }
 
-    function startElection() public onlyAdmin {
+    function startElection() public {
+        require(msg.sender == admin);
         require(running == false);
         running = true;
     }
 
-    function endElection() public onlyAdmin {
+    function endElection() public {
+        require(msg.sender == admin);
         require(running == true);
         running = false;
     }
 
-    function getRunning() public view returns (bool) {
-        return running;
-    }
 }

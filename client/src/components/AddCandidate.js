@@ -5,9 +5,7 @@ export const AddCandidate = (props) => {
     const { account, electionInstance, isAdmin } = props;
     const [successMsg, setSuccessMsg] = useState("");
     const [name, setName] = useState("");
-    const [party, setParty] = useState("");
     const [constituency, setConstituency] = useState("");
-    const [manifesto, setManifesto] = useState("");
     const [loading, setLoading] = useState(false);
 
     const nameOnChange = (event, value) => {
@@ -16,18 +14,6 @@ export const AddCandidate = (props) => {
         }
     };
 
-    const partyOnChange = (event, value) => {
-        if (value !== undefined) {
-            setParty(value);
-        }
-    };
-
-    const manifestoOnChange = (_, value) => {
-        if (value !== undefined) {
-            setManifesto(value);
-        }
-    }
-
     const constituencyOnChange = (event, item) => {
         setConstituency(item);
     };
@@ -35,7 +21,7 @@ export const AddCandidate = (props) => {
     const uploadToChain = async () => {
         try {
             setLoading(true);
-            await electionInstance.methods.addCandidate(name, party, manifesto, constituency.key).send({ from: account });
+            await electionInstance.methods.addCandidate(name, constituency.key).send({ from: account });
             setSuccessMsg("Successfully add candidate");
             window.location.reload()
             setLoading(false);
@@ -48,7 +34,7 @@ export const AddCandidate = (props) => {
 
     const onSubmit = (event) => {
         event.preventDefault();
-        if (!name || !party || !constituency || !manifesto) {
+        if (!name || !constituency) {
             setSuccessMsg("Missing input field");
         } else {
             uploadToChain();
@@ -77,12 +63,6 @@ export const AddCandidate = (props) => {
                                 value={name}
                                 onChange={nameOnChange}
                             />
-                            <TextField
-                                name="party"
-                                label="Party"
-                                value={party}
-                                onChange={partyOnChange}
-                            />
                             <Dropdown
                                 label="Constituency"
                                 selectedKey={constituency ? constituency.key : undefined}
@@ -90,15 +70,6 @@ export const AddCandidate = (props) => {
                                 placeholder="Select an constituency"
                                 options={constituencies}
                                 styles={dropdownStyles}
-                            />
-
-                            <TextField
-                                name="manifesto"
-                                label="manifesto"
-                                value={manifesto}
-                                onChange={manifestoOnChange}
-                                multiline
-                                rows={5}
                             />
 
                             <div>
