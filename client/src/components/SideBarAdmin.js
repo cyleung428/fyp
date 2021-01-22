@@ -20,20 +20,20 @@ const textStyles = mergeStyles({
     margin: "4px 12px"
 })
 
-export const SideBar = () => {
+export const SideBarAdmin = () => {
     return (
         <div className={sideBarStyles}>
             <NavLink to="/" className={sideBarItemStyles} >
                 <div className={textStyles}>Home</div>
             </NavLink>
-            <NavLink to="/register" className={sideBarItemStyles} >
-                <div className={textStyles}>Register</div>
+            <NavLink to="/verify" className={sideBarItemStyles} >
+                <div className={textStyles}>Verify voters</div>
             </NavLink>
-            <NavLink to="/vote" className={sideBarItemStyles} >
-                <div className={textStyles}>Vote</div>
+            <NavLink to="/admin" className={sideBarItemStyles} >
+                <div className={textStyles}>manage election</div>
             </NavLink>
-            <NavLink to="/result" className={sideBarItemStyles} >
-                <div className={textStyles}>Result</div>
+            <NavLink to="/addCandidate" className={sideBarItemStyles} >
+                <div className={textStyles}>Add candidate</div>
             </NavLink>
         </div>
     );

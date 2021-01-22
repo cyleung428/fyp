@@ -10,6 +10,8 @@ import { Verify } from './components/Verify';
 import { Admin } from './components/Admin';
 import { AddCandidate } from './components/AddCandidate';
 import Vote from './components/Vote';
+import { Result } from './components/Result';
+import { SideBarAdmin } from './components/SideBarAdmin';
 
 const appStyles = mergeStyles({
     display: "flex",
@@ -77,7 +79,9 @@ export default function App() {
     return (
         <Router>
             <div className={appStyles}>
-                <SideBar />
+                {
+                    isAdmin?<SideBarAdmin />:<SideBar />
+                }
                 <div className={bodyStyles}>
                     <Switch>
                         <Route path="/register">
@@ -94,6 +98,9 @@ export default function App() {
                         </Route>
                         <Route path="/addCandidate">
                             <AddCandidate isAdmin={isAdmin} account={account} electionInstance={electionInstance}/>
+                        </Route>
+                        <Route path="/result">
+                            <Result isAdmin={isAdmin} account={account} electionInstance={electionInstance}/>
                         </Route>
                         <Route path="/">
                             <Home account={account} isAdmin={isAdmin} />
