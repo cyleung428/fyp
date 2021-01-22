@@ -31,7 +31,7 @@ const Vote = (props) => {
 
     const getVoterInfo = async () => {
         if (electionInstance) {
-            let voterInfo = await electionInstance.methods.voterDetails(account).call();
+            let voterInfo = await electionInstance.methods.getVoterDetails(account).call();
             let running = await electionInstance.methods.running().call();
             setRunning(running);
             setVoterInfo(voterInfo);

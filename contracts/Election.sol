@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.21 <0.7.0;
+pragma experimental ABIEncoderV2;
 
 
 contract Election {
@@ -7,6 +8,7 @@ contract Election {
     uint256 public candidateCount;
     uint256 public voterCount;
     bool public running;
+    bool public end;
 
     // Constructor
     constructor() public {
@@ -14,20 +16,23 @@ contract Election {
         candidateCount = 0;
         voterCount = 0;
         running = false;
+        end = false;
     }
 
-    function getAdmin() public view returns (address) {
-        return admin;
-    }
+
 
     struct Candidate {
         string name;
-        uint256 voteCount;
         uint256 constituency;
         uint256 candidateId;
     }
     mapping(uint256 => Candidate) public candidateDetails;
+    mapping(uint256 => uint) voteCountMap;
 
+    function getVoteCount(uint id) public view returns (uint) {
+        require(end);
+        return voteCountMap[id];
+    }
 
 
     function addCandidate(
@@ -38,7 +43,6 @@ contract Election {
         Candidate memory newCandidate =
             Candidate({
                 name: _name,
-                voteCount: 0,
                 constituency: _constituency,
                 candidateId: candidateCount
             });
@@ -57,9 +61,13 @@ contract Election {
         bool isVerified;
     }
     address[] public voters;
-    mapping(address => Voter) public voterDetails;
+    mapping(address => Voter) voterDetails;
 
-    // register to be added as voter
+    function getVoterDetails(address voterAddress) public view returns (Voter memory){
+        require(msg.sender == admin || msg.sender == voterAddress);
+        return voterDetails[voterAddress];
+    }
+
     function registerVoter(
         string memory _name,
         string memory _hkid,
@@ -96,20 +104,23 @@ contract Election {
                 candidateDetails[candidateId].constituency
         );
         require(running == true);
-        candidateDetails[candidateId].voteCount += 1;
+        voteCountMap[candidateId] += 1;
         voterDetails[msg.sender].hasVoted = true;
     }
 
     function startElection() public {
         require(msg.sender == admin);
         require(running == false);
+        require(end == false);
         running = true;
     }
+
 
     function endElection() public {
         require(msg.sender == admin);
         require(running == true);
         running = false;
+        end = true;
     }
 
 }

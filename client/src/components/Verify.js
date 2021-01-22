@@ -25,8 +25,10 @@ export const Verify = (props) => {
     const { account, electionInstance, isAdmin } = props;
     const [voters, setVoters] = useState([]);
     useEffect(() => {
-        getAllVoters(electionInstance);
-    }, [electionInstance])
+        if (isAdmin) {
+            getAllVoters(electionInstance);
+        }
+    }, [electionInstance, isAdmin])
 
     const getAllVoters = async (electionInstance) => {
         if (!electionInstance) {
@@ -36,7 +38,7 @@ export const Verify = (props) => {
             const count = await electionInstance.methods.voterCount().call();
             for (let i = 0; i < count; i++) {
                 const address = await electionInstance.methods.voters(i).call();
-                const details = await electionInstance.methods.voterDetails(address).call();
+                const details = await electionInstance.methods.getVoterDetails(address).call();
                 voters.push(details);
             }
             setVoters(voters);
