@@ -12,10 +12,10 @@ import {
 } from 'office-ui-fabric-react/lib/DocumentCard';
 
 const pageStyle = mergeStyles({
-    display: "flex",
     alignItems: "center",
     justifyContent: "center",
     width: "100%",
+    padding: "50px"
 });
 
 const Vote = (props) => {

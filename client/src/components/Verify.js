@@ -71,7 +71,7 @@ export const Verify = (props) => {
         switch (column.key) {
             case 'hkidPhotoHash':
             case 'addressPhotoHash':
-                return <Image src={"https://gateway.ipfs.io/ipfs/" + fieldContent} width={150} height={150} imageFit={ImageFit.cover} />;
+                return <Image src={"https://gateway.ipfs.io/ipfs/" + fieldContent} width={200} height={150} imageFit={ImageFit.cover} />;
             case 'isVerified':
                 return fieldContent ? <FontIcon iconName="Accept" className={classNames.greenYellow} /> : <FontIcon iconName="Clear" className={classNames.salmon} />;
             case 'button':

@@ -30,7 +30,7 @@ contract Election {
     mapping(uint256 => uint) voteCountMap;
 
     function getVoteCount(uint id) public view returns (uint) {
-        require(end);
+        // require(end);
         return voteCountMap[id];
     }
 
@@ -111,7 +111,6 @@ contract Election {
     function startElection() public {
         require(msg.sender == admin);
         require(running == false);
-        require(end == false);
         running = true;
     }
 
