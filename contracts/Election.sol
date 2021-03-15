@@ -13,17 +13,31 @@ contract Election {
     // Constructor
     constructor() public {
         admin = msg.sender;
-        candidateCount = 0;
+        candidateCount = 3;
         voterCount = 0;
         running = false;
         end = false;
+        candidateDetails[0] =
+            Candidate({
+                name: "candidate A",
+                candidateId: 0
+            });
+        candidateDetails[1] =
+            Candidate({
+                name: "candidate B",
+                candidateId: 1
+            });
+        candidateDetails[2] = 
+            Candidate({
+                name: "candidate C",
+                candidateId: 2
+            });
     }
 
 
 
     struct Candidate {
         string name;
-        uint256 constituency;
         uint256 candidateId;
     }
     mapping(uint256 => Candidate) public candidateDetails;
@@ -34,31 +48,10 @@ contract Election {
         return voteCountMap[id];
     }
 
-
-    function addCandidate(
-        string memory _name,
-        uint256 _constituency
-    ) public {
-        require(msg.sender == admin);
-        Candidate memory newCandidate =
-            Candidate({
-                name: _name,
-                constituency: _constituency,
-                candidateId: candidateCount
-            });
-        candidateDetails[candidateCount] = newCandidate;
-        candidateCount += 1;
-    }
-
     struct Voter {
-        address voterAddress;
-        string name;
-        string hkid;
-        string hkidPhotoHash;
-        string addressPhotoHash;
-        uint256 constituency;
+        string hkidHash;
+        uint voteTimeStamp;
         bool hasVoted;
-        bool isVerified;
     }
     address[] public voters;
     mapping(address => Voter) voterDetails;
@@ -68,41 +61,8 @@ contract Election {
         return voterDetails[voterAddress];
     }
 
-    function registerVoter(
-        string memory _name,
-        string memory _hkid,
-        uint256 _constituency,
-        string memory _hkidHash,
-        string memory _addressHash
-    ) public {
-        Voter memory newVoter =
-            Voter({
-                voterAddress: msg.sender,
-                hkidPhotoHash: _hkidHash,
-                addressPhotoHash: _addressHash,
-                name: _name,
-                hkid: _hkid,
-                constituency: _constituency,
-                hasVoted: false,
-                isVerified: false
-            });
-        voterDetails[msg.sender] = newVoter;
-        voters.push(msg.sender);
-        voterCount += 1;
-    }
-
-    function verifyVoter(address _address) public {
-        require(msg.sender == admin);
-        voterDetails[_address].isVerified = true;
-    }
-
     function vote(uint256 candidateId) public {
         require(voterDetails[msg.sender].hasVoted == false);
-        require(voterDetails[msg.sender].isVerified == true);
-        require(
-            voterDetails[msg.sender].constituency ==
-                candidateDetails[candidateId].constituency
-        );
         require(running == true);
         voteCountMap[candidateId] += 1;
         voterDetails[msg.sender].hasVoted = true;

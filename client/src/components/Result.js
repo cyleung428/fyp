@@ -16,12 +16,6 @@ const iconClass = mergeStyles({
     width: 25,
 });
 
-const classNames = mergeStyleSets({
-    deepSkyBlue: [{ color: 'deepskyblue' }, iconClass],
-    greenYellow: [{ color: 'greenyellow' }, iconClass],
-    salmon: [{ color: 'salmon' }, iconClass],
-});
-
 export const Result = (props) => {
     const { account, electionInstance, isAdmin } = props;
     const [candidates, setCandidates] = useState([]);
@@ -56,14 +50,6 @@ export const Result = (props) => {
     return (
         !isAdmin ?
             <div className={pageStyles}>
-                <Pivot aria-label="Pivot" linkSize={PivotLinkSize.large}>
-                    <PivotItem headerText="constituency 0">
-                    </PivotItem>
-                    <PivotItem headerText="constituency 1">
-                    </PivotItem>
-                    <PivotItem headerText="constituency 2">
-                    </PivotItem>
-                </Pivot>
                 <DetailsList
                     items={candidates}
                     columns={_columns}

@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Home from "./components/Home";
-import Register from "./components/Register";
 import { SideBar } from './components/SideBar';
 import ElectionContract from "./contracts/Election.json";
 import getWeb3 from "./getWeb3";
 import { mergeStyles } from '@fluentui/react';
-import { Verify } from './components/Verify';
 import { Admin } from './components/Admin';
-import { AddCandidate } from './components/AddCandidate';
 import Vote from './components/Vote';
 import { Result } from './components/Result';
 import { SideBarAdmin } from './components/SideBarAdmin';
@@ -88,20 +85,11 @@ export default function App() {
                 }
                 <div className={bodyStyles}>
                     <Switch>
-                        <Route path="/register">
-                            <Register isAdmin={isAdmin} account={account} electionInstance={electionInstance}/>
-                        </Route>
                         <Route path="/vote">
                             <Vote isAdmin={isAdmin} account={account} electionInstance={electionInstance}/>
                         </Route>
-                        <Route path="/verify">
-                            <Verify isAdmin={isAdmin} account={account} electionInstance={electionInstance}/>
-                        </Route>
                         <Route path="/admin">
                             <Admin isAdmin={isAdmin} account={account} electionInstance={electionInstance}/>
-                        </Route>
-                        <Route path="/addCandidate">
-                            <AddCandidate isAdmin={isAdmin} account={account} electionInstance={electionInstance}/>
                         </Route>
                         <Route path="/result">
                             <Result isAdmin={isAdmin} account={account} electionInstance={electionInstance}/>
