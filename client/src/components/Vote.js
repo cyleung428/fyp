@@ -23,11 +23,66 @@ const Vote = (props) => {
     const [voterInfo, setVoterInfo] = useState(null);
     const [running, setRunning] = useState(false);
     const [candidates, setCandidates] = useState([]);
+    const [video,]=useState(React.createRef());
 
     useEffect(() => {
         getVoterInfo(electionInstance);
-        getAllCandidates(electionInstance)
+        getAllCandidates(electionInstance);
+        navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia || navigator.oGetUserMedia;
+        if (navigator.getUserMedia) {
+            navigator.getUserMedia({video: true}, handleVideo, videoError);
+        }
     }, [electionInstance, account])
+
+    const videoError=(error)=>{
+        console.log("error",error);
+    }
+
+    const handleVideo=(stream)=>{
+        video.current.srcObject = stream;
+    }
+
+    const onPlay = async () => {
+        if (
+            video.current.paused ||
+            video.current.ended
+        ) {
+            setTimeout(() => onPlay());
+            return;
+        }
+
+        // const options = new faceApi.TinyFaceDetectorOptions({
+        //   inputSize: 512,
+        //   scoreThreshold: 0.5
+        // });
+
+        // const result = await faceApi
+        //   .detectSingleFace(this.video.current, options)
+        //   .withFaceExpressions();
+
+        // if (result) {
+        //   this.log(result);
+        //   const expressions = result.expressions.reduce(
+        //     (acc, { expression, probability }) => {
+        //       acc.push([expressionMap[expression], probability]);
+        //       return acc;
+        //     },
+        //     []
+        //   );
+        //   this.log(expressions);
+        //   this.setState(() => ({ expressions }));
+        // }
+
+        setTimeout(() => onPlay(), 1000);
+    };
+
+    const run = async () => {
+        const mediaStream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: "user" }
+          });
+    
+        video.current.srcObject = mediaStream;
+    }
 
     const getVoterInfo = async () => {
         if (electionInstance) {
@@ -67,29 +122,52 @@ const Vote = (props) => {
 
 
     return (
-        isAdmin ?
-            <div>
-                Only voters can vote
-        </div> :
-            running && voterInfo && voterInfo.isVerified && !voterInfo.hasVoted ?
+        <>
+            {
+                isAdmin ?
+                    <div>
+                        Only voters can vote
+                    </div>:
+                    <div style={{ width: "100%", height: "100vh"}}>
+                    <video
+                        ref={video}
+                        autoPlay
+                        muted
+                        onPlay={onPlay}
+                        style={{
+                            position: "absolute",
+                            width: "100%",
+                            height: "100vh",
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            top: 0
+                        }}
+                    />
+                </div>
+            }
+            {
+                running && voterInfo && !voterInfo.hasVoted?
                 <div className={pageStyle}>
-                    {
-                        candidates.filter(candadate=>candadate.constituency===voterInfo.constituency).map(candidate =>
-                            <DocumentCard
-                                key={candidate.candidateId}
-                                styles={cardStyles}
-                                onClick={() => voteTo(candidate.candidateId)}
-                            >
-                                <DocumentCardDetails>
-                                    <DocumentCardTitle title={candidate.candidateId+ ": "+candidate.name} shouldTruncate />
-                                </DocumentCardDetails>
-                            </DocumentCard>)
-                    }
-                </div>
+                {
+                    candidates.filter(candadate => candadate.constituency === voterInfo.constituency).map(candidate =>
+                        <DocumentCard
+                            key={candidate.candidateId}
+                            styles={cardStyles}
+                            onClick={() => voteTo(candidate.candidateId)}
+                        >
+                            <DocumentCardDetails>
+                                <DocumentCardTitle title={candidate.candidateId + ": " + candidate.name} shouldTruncate />
+                            </DocumentCardDetails>
+                        </DocumentCard>)
+                }
+            </div>
                 :
-                <div>
-                    Currently unavaiable
+            <div>
+                Currently unavaiable
                 </div>
+            }
+        </>
     )
 }
 

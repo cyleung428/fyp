@@ -49,7 +49,7 @@ contract Election {
     }
 
     struct Voter {
-        string hkidHash;
+        bytes32 hkidHash;
         uint voteTimeStamp;
         bool hasVoted;
     }
@@ -61,11 +61,16 @@ contract Election {
         return voterDetails[voterAddress];
     }
 
-    function vote(uint256 candidateId) public {
+    function vote(uint256 candidateId, string memory hkId) public {
         require(voterDetails[msg.sender].hasVoted == false);
         require(running == true);
+        bytes32 hkidHash = sha256(abi.encodePacked(hkId));
         voteCountMap[candidateId] += 1;
-        voterDetails[msg.sender].hasVoted = true;
+        voterDetails[msg.sender] = Voter({
+            hkidHash: hkidHash,
+            voteTimeStamp: now,
+            hasVoted: true
+        });
     }
 
     function startElection() public {
