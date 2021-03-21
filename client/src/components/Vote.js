@@ -1,14 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import { mergeStyles, Stack, TextField, PrimaryButton, Dropdown } from '@fluentui/react'
+import { mergeStyles } from '@fluentui/react'
 import {
     DocumentCard,
-    DocumentCardActivity,
     DocumentCardTitle,
     DocumentCardDetails,
-    DocumentCardStatus,
-    DocumentCardImage,
-    IDocumentCardStyles,
-    IDocumentCardActivityPerson,
 } from 'office-ui-fabric-react/lib/DocumentCard';
 
 const pageStyle = mergeStyles({
@@ -24,15 +19,6 @@ const Vote = (props) => {
     const [running, setRunning] = useState(false);
     const [candidates, setCandidates] = useState([]);
     const [video,]=useState(React.createRef());
-
-    useEffect(() => {
-        getVoterInfo(electionInstance);
-        getAllCandidates(electionInstance);
-        navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia || navigator.oGetUserMedia;
-        if (navigator.getUserMedia) {
-            navigator.getUserMedia({video: true}, handleVideo, videoError);
-        }
-    }, [electionInstance, account])
 
     const videoError=(error)=>{
         console.log("error",error);
@@ -76,14 +62,6 @@ const Vote = (props) => {
         setTimeout(() => onPlay(), 1000);
     };
 
-    const run = async () => {
-        const mediaStream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: "user" }
-          });
-    
-        video.current.srcObject = mediaStream;
-    }
-
     const getVoterInfo = async () => {
         if (electionInstance) {
             let voterInfo = await electionInstance.methods.getVoterDetails(account).call();
@@ -104,6 +82,16 @@ const Vote = (props) => {
             setCandidates(candidateList);
         }
     }
+
+    useEffect(() => {
+        getVoterInfo(electionInstance);
+        getAllCandidates(electionInstance);
+        navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia || navigator.oGetUserMedia;
+        if (navigator.getUserMedia) {
+            navigator.getUserMedia({video: true}, handleVideo, videoError);
+        }
+    }, [electionInstance, account])
+
 
     const cardStyles = {
         root: { display: 'block', marginRight: 20, marginBottom: 20, width: 320 },
@@ -128,16 +116,15 @@ const Vote = (props) => {
                     <div>
                         Only voters can vote
                     </div>:
-                    <div style={{ width: "100%", height: "100vh"}}>
+                    <div style={{ width: "100%", height: "60vh"}}>
                     <video
                         ref={video}
                         autoPlay
                         muted
                         onPlay={onPlay}
                         style={{
-                            position: "absolute",
                             width: "100%",
-                            height: "100vh",
+                            height: "50vh",
                             left: 0,
                             right: 0,
                             bottom: 0,

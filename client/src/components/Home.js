@@ -1,5 +1,5 @@
 import React, { } from "react";
-import { mergeStyles, Stack, TextField, PrimaryButton, Dropdown } from '@fluentui/react'
+import { mergeStyles } from '@fluentui/react'
 
 
 const pageStyle = mergeStyles({
@@ -11,7 +11,7 @@ const pageStyle = mergeStyles({
 
 
 function Home(props) {
-  const { account, isAdmin } = props;
+  const { account } = props;
   return (
     <div className={pageStyle}>
           Welcome to Election Panel, {account}

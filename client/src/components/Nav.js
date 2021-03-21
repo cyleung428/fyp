@@ -1,5 +1,5 @@
 import React from 'react'
-import { mergeStyles, Icon, TooltipHost } from "@fluentui/react";
+import { mergeStyles } from "@fluentui/react";
 
 const menuStyles = mergeStyles({
     width: '100%',

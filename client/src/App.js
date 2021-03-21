@@ -16,9 +16,6 @@ const appStyles = mergeStyles({
     display: "flex",
     width: "100%"
 })
-const navStyles = mergeStyles({
-    width: "324px"
-})
 const bodyStyles = mergeStyles({
     display: "flex",
     marginTop: "80px",

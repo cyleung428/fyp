@@ -1,19 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { DetailsList, SelectionMode } from 'office-ui-fabric-react/lib/DetailsList';
-import { Image, ImageFit } from 'office-ui-fabric-react/lib/Image';
-import { mergeStyles, mergeStyleSets } from '@fluentui/react';
-import { FontIcon } from 'office-ui-fabric-react/lib/Icon';
-import { PrimaryButton } from 'office-ui-fabric-react';
-import { Pivot, PivotItem, PivotLinkSize } from 'office-ui-fabric-react/lib/Pivot';
+import { mergeStyles } from '@fluentui/react';
 
 const pageStyles = mergeStyles({
     padding: "16px 20px"
-});
-
-const iconClass = mergeStyles({
-    fontSize: 25,
-    height: 25,
-    width: 25,
 });
 
 export const Result = (props) => {
@@ -36,7 +26,6 @@ export const Result = (props) => {
                 details.voteCount = voteCount;
                 candidates.push(details);
             }
-            console.log(candidates);
             setCandidates(candidates);
         }
     }
