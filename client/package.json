@@ -5,6 +5,7 @@
   "dependencies": {
     "@fluentui/react": "^7.155.4",
     "@uifabric/file-type-icons": "^7.6.24",
+    "face-api.js": "^0.22.2",
     "history": "4.10.1",
     "ipfs-http-client": "^48.2.1",
     "next": "9.4.4",
