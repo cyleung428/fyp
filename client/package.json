@@ -4,7 +4,10 @@
   "private": true,
   "dependencies": {
     "@fluentui/react": "^7.155.4",
+    "@tensorflow-models/handpose": "0.0.6",
+    "@tensorflow/tfjs": "^3.3.0",
     "@uifabric/file-type-icons": "^7.6.24",
+    "@vladmandic/face-api": "^1.1.5",
     "face-api.js": "^0.22.2",
     "history": "4.10.1",
     "ipfs-http-client": "^48.2.1",

@@ -5,7 +5,9 @@ import {
     DocumentCardTitle,
     DocumentCardDetails,
 } from 'office-ui-fabric-react/lib/DocumentCard';
-import * as faceapi from 'face-api.js';
+import * as faceapi from '@vladmandic/face-api';
+import * as tf from "@tensorflow/tfjs";
+import * as handpose from "@tensorflow-models/handpose";
 
 const pageStyle = mergeStyles({
     alignItems: "center",
@@ -39,21 +41,21 @@ const Vote = (props) => {
         }
 
         const options = new faceapi.TinyFaceDetectorOptions({
-          inputSize: 512,
-          scoreThreshold: 0.5
+            inputSize: 512,
+            scoreThreshold: 0.5
         });
-        
+
 
         const result = await faceapi
-          .detectAllFaces(video.current, options)
-          .withFaceExpressions();
+            .detectAllFaces(video.current, options)
+            .withFaceExpressions();
 
-        if (result) {
-          console.log(result);
-        }
+        // if (result) {
+        //     console.log(result);
+        // }
 
-        if (result.length >1) {
-            const canvases = await faceapi.extractFaces(video.current, result.map(result=>result.detection))
+        if (result.length === 2) {
+            const canvases = await faceapi.extractFaces(video.current, result.map(result => result.detection))
             // console.log(canvases)
             const faceDes1 = await faceapi.computeFaceDescriptor(canvases[0])
             const faceDes2 = await faceapi.computeFaceDescriptor(canvases[1])
@@ -61,6 +63,19 @@ const Vote = (props) => {
                 faceapi.euclideanDistance(faceDes1, faceDes2)
             )
             console.log(distance)
+            // Get Video Properties
+            const videoObj = video.current;
+            const videoWidth = video.current.videoWidth;
+            const videoHeight = video.current.videoHeight;
+
+            // Set video width
+            video.current.width = videoWidth;
+            video.current.height = videoHeight;
+
+            // Make Detections
+            const hand = await handpose.load();
+            const handResult = await hand.estimateHands(videoObj);
+            console.log(handResult);
         }
 
         setTimeout(() => onPlay(), 2000);
@@ -126,19 +141,12 @@ const Vote = (props) => {
                     <div>
                         Only voters can vote
                     </div> :
-                    <div style={{ width: "100%"}}>
+                    <div style={{ width: "100%" }}>
                         <video
                             ref={video}
                             autoPlay
                             muted
                             onPlay={onPlay}
-                            style={{
-                                width: "100%",
-                                left: 0,
-                                right: 0,
-                                bottom: 0,
-                                top: 0
-                            }}
                         />
                     </div>
             }
