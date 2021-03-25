@@ -26,6 +26,7 @@ const Vote = (props) => {
     const [hkid, setHkid] = useState("")
     const [valid, setValid] = useState(false);
     const [selectedCandidate, setSelectedCandidate] = useState();
+    const [model, setModel] = useState();
 
     const videoError = (error) => {
         console.log("error", error);
@@ -57,9 +58,7 @@ const Vote = (props) => {
             .detectAllFaces(video.current, options)
             .withFaceExpressions();
 
-
-        const hand = await handpose.load();
-        const handResult = await hand.estimateHands(video.current, true);
+        const handResult = await model.estimateHands(video.current, true);
         const GE = new fp.GestureEstimator([
             fp.Gestures.VictoryGesture,
             fp.Gestures.ThumbsUpGesture
@@ -126,6 +125,7 @@ const Vote = (props) => {
             await faceapi.loadFaceRecognitionModel("/models");
             await faceapi.nets.tinyFaceDetector.loadFromUri("/models");
             await faceapi.loadFaceExpressionModel("/models");
+            setModel(await handpose.load());
         }
         loadModels();
         getVoterInfo(electionInstance);
