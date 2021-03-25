@@ -25,14 +25,8 @@ export const SideBarAdmin = () => {
             <NavLink to="/" className={sideBarItemStyles} >
                 <div className={textStyles}>Home</div>
             </NavLink>
-            <NavLink to="/verify" className={sideBarItemStyles} >
-                <div className={textStyles}>Verify voters</div>
-            </NavLink>
             <NavLink to="/admin" className={sideBarItemStyles} >
                 <div className={textStyles}>manage election</div>
-            </NavLink>
-            <NavLink to="/addCandidate" className={sideBarItemStyles} >
-                <div className={textStyles}>Add candidate</div>
             </NavLink>
         </div>
     );
