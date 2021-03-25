@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { mergeStyles } from '@fluentui/react'
 import * as faceapi from '@vladmandic/face-api';
 import * as tf from '@tensorflow/tfjs';
 import * as handpose from "@tensorflow-models/handpose";
 import * as fp from "fingerpose";
+import { TextField } from 'office-ui-fabric-react/lib/TextField';
+
+
+const narrowTextFieldStyles = { fieldGroup: { width: 200 } };
 
 const Vote = (props) => {
     const { account, electionInstance, isAdmin } = props;
@@ -11,6 +14,7 @@ const Vote = (props) => {
     const [running, setRunning] = useState(false);
     const [candidates, setCandidates] = useState([]);
     const [video,] = useState(React.createRef());
+    const [hkid, setHkid] = useState("")
 
     const videoError = (error) => {
         console.log("error", error);
@@ -39,9 +43,6 @@ const Vote = (props) => {
             .detectAllFaces(video.current, options)
             .withFaceExpressions();
 
-        if (result) {
-            console.log(result);
-        }
 
         const hand = await handpose.load();
         const handResult = await hand.estimateHands(video.current, true);
@@ -114,6 +115,15 @@ const Vote = (props) => {
         }
     }
 
+    const onChangeHkid = React.useCallback(
+        (event, newValue) => {
+            if (!newValue || newValue.length <= 8) {
+                setHkid(newValue || '');
+            }
+        },
+        [],
+    );
+
 
 
     return (
@@ -123,19 +133,24 @@ const Vote = (props) => {
                     <div>
                         Only voters can vote
                     </div> :
-                    running && voterInfo && !voterInfo.hasVoted && candidates.length>0 ?
-                    <div style={{ width: "100%" }}>
-                        <video
-                            ref={video}
-                            autoPlay
-                            muted
-                            onPlay={onPlay}
-                            width="100%"
-                        />
-                    </div>
-                    :
-                    <div>
-                        unavaiable
+                    running && voterInfo && !voterInfo.hasVoted && candidates.length > 0 ?
+                        <div style={{ width: "100%" }}>
+                            <TextField
+                                label="HKID number"
+                                value={hkid}
+                                onChange={onChangeHkid}
+                                styles={narrowTextFieldStyles}
+                            />
+                            <video
+                                ref={video}
+                                autoPlay
+                                muted
+                                onPlay={onPlay}
+                            />
+                        </div>
+                        :
+                        <div>
+                            unavaiable
                     </div>
             }
         </div>
