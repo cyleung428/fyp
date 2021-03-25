@@ -58,15 +58,18 @@ const Vote = (props) => {
             .detectAllFaces(video.current, options)
             .withFaceExpressions();
 
-        const handResult = await model.estimateHands(video.current, true);
-        const GE = new fp.GestureEstimator([
-            fp.Gestures.VictoryGesture,
-            fp.Gestures.ThumbsUpGesture
-        ]);
-        if (handResult.length > 0) {
-            const estimatedGestures = GE.estimate(handResult[0].landmarks, 7.5);
-            console.log(estimatedGestures);
+        if (model) {
+            const handResult = await model.estimateHands(video.current, true);
+            const GE = new fp.GestureEstimator([
+                fp.Gestures.VictoryGesture,
+                fp.Gestures.ThumbsUpGesture
+            ]);
+            if (handResult.length > 0) {
+                const estimatedGestures = GE.estimate(handResult[0].landmarks, 7.5);
+                console.log(estimatedGestures);
+            }
         }
+
 
 
         if (result.length === 2) {
