@@ -1,20 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { mergeStyles } from '@fluentui/react'
-import {
-    DocumentCard,
-    DocumentCardTitle,
-    DocumentCardDetails,
-} from 'office-ui-fabric-react/lib/DocumentCard';
 import * as faceapi from '@vladmandic/face-api';
-import * as tf from "@tensorflow/tfjs";
+import * as tf from '@tensorflow/tfjs';
 import * as handpose from "@tensorflow-models/handpose";
-
-const pageStyle = mergeStyles({
-    alignItems: "center",
-    justifyContent: "center",
-    width: "100%",
-    padding: "50px"
-});
+import * as fp from "fingerpose";
 
 const Vote = (props) => {
     const { account, electionInstance, isAdmin } = props;
@@ -50,32 +39,30 @@ const Vote = (props) => {
             .detectAllFaces(video.current, options)
             .withFaceExpressions();
 
-        // if (result) {
-        //     console.log(result);
-        // }
+        if (result) {
+            console.log(result);
+        }
+
+        const hand = await handpose.load();
+        const handResult = await hand.estimateHands(video.current, true);
+        const GE = new fp.GestureEstimator([
+            fp.Gestures.VictoryGesture,
+            fp.Gestures.ThumbsUpGesture
+        ]);
+        if (handResult.length > 0) {
+            const estimatedGestures = GE.estimate(handResult[0].landmarks, 7.5);
+            console.log(estimatedGestures);
+        }
+
 
         if (result.length === 2) {
             const canvases = await faceapi.extractFaces(video.current, result.map(result => result.detection))
-            // console.log(canvases)
             const faceDes1 = await faceapi.computeFaceDescriptor(canvases[0])
             const faceDes2 = await faceapi.computeFaceDescriptor(canvases[1])
             const distance = faceapi.utils.round(
                 faceapi.euclideanDistance(faceDes1, faceDes2)
             )
             console.log(distance)
-            // Get Video Properties
-            const videoObj = video.current;
-            const videoWidth = video.current.videoWidth;
-            const videoHeight = video.current.videoHeight;
-
-            // Set video width
-            video.current.width = videoWidth;
-            video.current.height = videoHeight;
-
-            // Make Detections
-            const hand = await handpose.load();
-            const handResult = await hand.estimateHands(videoObj);
-            console.log(handResult);
         }
 
         setTimeout(() => onPlay(), 2000);
@@ -117,11 +104,6 @@ const Vote = (props) => {
         }
     }, [electionInstance, account])
 
-
-    const cardStyles = {
-        root: { display: 'block', marginRight: 20, marginBottom: 20, width: 320 },
-    };
-
     const voteTo = async (candidateId) => {
         try {
             await electionInstance.methods.vote(candidateId).send({ from: account });
@@ -141,35 +123,20 @@ const Vote = (props) => {
                     <div>
                         Only voters can vote
                     </div> :
+                    running && voterInfo && !voterInfo.hasVoted && candidates.length>0 ?
                     <div style={{ width: "100%" }}>
                         <video
                             ref={video}
                             autoPlay
                             muted
                             onPlay={onPlay}
+                            width="100%"
                         />
-                    </div>
-            }
-            {
-                running && voterInfo && !voterInfo.hasVoted ?
-                    <div className={pageStyle}>
-                        {
-                            candidates.filter(candadate => candadate.constituency === voterInfo.constituency).map(candidate =>
-                                <DocumentCard
-                                    key={candidate.candidateId}
-                                    styles={cardStyles}
-                                    onClick={() => voteTo(candidate.candidateId)}
-                                >
-                                    <DocumentCardDetails>
-                                        <DocumentCardTitle title={candidate.candidateId + ": " + candidate.name} shouldTruncate />
-                                    </DocumentCardDetails>
-                                </DocumentCard>)
-                        }
                     </div>
                     :
                     <div>
-                        Currently unavaiable
-                </div>
+                        unavaiable
+                    </div>
             }
         </div>
     )
