@@ -26,6 +26,9 @@ const Vote = (props) => {
     }
 
     const onPlay = async () => {
+        if (!video.current) {
+            return;
+        }
         if (
             video.current.paused ||
             video.current.ended
@@ -143,7 +146,7 @@ const Vote = (props) => {
                     running && voterInfo && !voterInfo.hasVoted && candidates.length > 0 ?
                         <div style={{ width: "100%" }}>
                             <div>
-                                
+
                             </div>
                             <div>
                                 {valid? "Valid": "not valid"}
