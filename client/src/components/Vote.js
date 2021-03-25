@@ -4,6 +4,10 @@ import * as tf from '@tensorflow/tfjs';
 import * as handpose from "@tensorflow-models/handpose";
 import * as fp from "fingerpose";
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
+import {
+    MessageBar,
+    MessageBarType
+} from 'office-ui-fabric-react';
 
 
 const narrowTextFieldStyles = { fieldGroup: { width: 200 } };
@@ -149,7 +153,21 @@ const Vote = (props) => {
 
                             </div>
                             <div>
-                                {valid? "Valid": "not valid"}
+                                {valid ?
+                                    <>
+                                        <MessageBar
+                                            messageBarType={MessageBarType.success}
+                                        >
+                                            Biometric scanning test pass, you can show 👍 for selecting the candidate and ✌️ for switching candidte
+                              </MessageBar>
+                                    </>
+                                    :
+                                    <MessageBar
+                                        messageBarType={MessageBarType.error}
+                                    >
+                                        Biometric scanning test fail, please turn your camera on, show your hkid card as well as your face
+                                    </MessageBar>
+                                }
                             </div>
                             <TextField
                                 label="HKID number"
