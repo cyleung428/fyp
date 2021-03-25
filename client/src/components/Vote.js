@@ -15,6 +15,7 @@ const Vote = (props) => {
     const [candidates, setCandidates] = useState([]);
     const [video,] = useState(React.createRef());
     const [hkid, setHkid] = useState("")
+    const [valid, setValid] = useState(false);
 
     const videoError = (error) => {
         console.log("error", error);
@@ -63,7 +64,13 @@ const Vote = (props) => {
             const distance = faceapi.utils.round(
                 faceapi.euclideanDistance(faceDes1, faceDes2)
             )
-            console.log(distance)
+            if (distance > 0.6) {
+                setValid(true);
+            } else {
+                setValid(false);
+            }
+        } else {
+            setValid(false);
         }
 
         setTimeout(() => onPlay(), 2000);
@@ -135,6 +142,12 @@ const Vote = (props) => {
                     </div> :
                     running && voterInfo && !voterInfo.hasVoted && candidates.length > 0 ?
                         <div style={{ width: "100%" }}>
+                            <div>
+                                
+                            </div>
+                            <div>
+                                {valid? "Valid": "not valid"}
+                            </div>
                             <TextField
                                 label="HKID number"
                                 value={hkid}
