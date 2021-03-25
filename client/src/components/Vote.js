@@ -5,6 +5,11 @@ import * as handpose from "@tensorflow-models/handpose";
 import * as fp from "fingerpose";
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import {
+    DocumentCard,
+    DocumentCardActivity,
+    DocumentCardTitle,
+} from 'office-ui-fabric-react/lib/DocumentCard';
+import {
     MessageBar,
     MessageBarType
 } from 'office-ui-fabric-react';
@@ -20,6 +25,7 @@ const Vote = (props) => {
     const [video,] = useState(React.createRef());
     const [hkid, setHkid] = useState("")
     const [valid, setValid] = useState(false);
+    const [selectedCandidate, setSelectedCandidate] = useState();
 
     const videoError = (error) => {
         console.log("error", error);
@@ -104,6 +110,17 @@ const Vote = (props) => {
         }
     }
 
+    const selectNextCandidate = () => {
+        const index = candidates.findIndex(candidate => candidate.candidateId === selectedCandidate.candidateId);
+        setSelectedCandidate(candidates[(index + 1) % candidates.length]);
+    }
+
+    useEffect(() => {
+        if (candidates.length > 0) {
+            setSelectedCandidate(candidates[0]);
+        }
+    }, [candidates])
+
     useEffect(() => {
         async function loadModels() {
             await faceapi.loadFaceRecognitionModel("/models");
@@ -149,9 +166,23 @@ const Vote = (props) => {
                     </div> :
                     running && voterInfo && !voterInfo.hasVoted && candidates.length > 0 ?
                         <div style={{ width: "100%" }}>
-                            <div>
-
+                            {
+                                selectedCandidate ?
+                                    <DocumentCard
+                                        aria-label="Default Document Card"
+                                    >
+                                        <DocumentCardTitle
+                                            title={
+                                                selectedCandidate.name
+                                            }
+                                            shouldTruncate
+                                        />
+                                        <DocumentCardActivity activity="Democracy Party" people={[{ name: selectedCandidate.candidateId }]} />
+                                    </DocumentCard> :
+                                    <div>
+                                        loading candidate
                             </div>
+                            }
                             <div>
                                 {valid ?
                                     <>
