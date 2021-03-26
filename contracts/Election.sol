@@ -55,20 +55,22 @@ contract Election {
     }
     address[] public voters;
     mapping(address => Voter) voterDetails;
+    mapping(bytes32 => bool) hkidHashMap;
 
     function getVoterDetails(address voterAddress) public view returns (Voter memory){
-        require(msg.sender == admin || msg.sender == voterAddress);
         return voterDetails[voterAddress];
     }
 
-    function vote(uint256 candidateId, string memory hkId) public {
-        require(voterDetails[msg.sender].hasVoted == false);
-        require(running == true);
+    function vote(uint256 candidateId, string memory hkId, uint timeStamp) public {
+        require(voterDetails[msg.sender].hasVoted == false, "Voter has voted");
+        require(running == true, "Currently not running");
+        require(hkidHashMap[sha256(abi.encodePacked(hkId))] == false, "The HKID has been voted");
         bytes32 hkidHash = sha256(abi.encodePacked(hkId));
+        hkidHashMap[hkidHash] = true;
         voteCountMap[candidateId] += 1;
         voterDetails[msg.sender] = Voter({
             hkidHash: hkidHash,
-            voteTimeStamp: now,
+            voteTimeStamp: timeStamp,
             hasVoted: true
         });
     }

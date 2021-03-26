@@ -11,6 +11,7 @@ import {
     DocumentCard,
     DocumentCardActivity,
     DocumentCardTitle,
+    DocumentCardType
 } from 'office-ui-fabric-react/lib/DocumentCard';
 import {
     MessageBar,
@@ -19,6 +20,10 @@ import {
 
 
 const narrowTextFieldStyles = { fieldGroup: { width: 200 } };
+
+const cardStyles = {
+    root: { marginRight: 20, width: 500, maxWidth: 500 },
+  };
 
 const Vote = (props) => {
     const { account, electionInstance, isAdmin } = props;
@@ -130,6 +135,7 @@ const Vote = (props) => {
             let running = await electionInstance.methods.running().call();
             setRunning(running);
             setVoterInfo(voterInfo);
+            console.log(voterInfo);
         }
     }
 
@@ -168,15 +174,18 @@ const Vote = (props) => {
         loadModels();
         getVoterInfo(electionInstance);
         getAllCandidates(electionInstance);
+    }, [electionInstance, account])
+
+    useEffect(() => {
         navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia || navigator.oGetUserMedia;
         if (navigator.getUserMedia && video.current) {
             navigator.getUserMedia({ video: true }, handleVideo, videoError);
         }
-    }, [electionInstance, account])
+    }, [video.current])
 
     const voteTo = async () => {
         try {
-            await electionInstance.methods.vote(selectedCandidate.candidateId, hkid).send({ from: account });
+            await electionInstance.methods.vote(selectedCandidate.candidateId, hkid, new Date().getTime()).send({ from: account });
             alert("Successfully vote");
             window.location.reload();
         } catch (error) {
@@ -198,7 +207,7 @@ const Vote = (props) => {
 
 
     return (
-        <div style={{ width: "100%" }}>
+        <div style={{ width: "100%", padding:"15px" }}>
             {
                 isAdmin ?
                     <div>
@@ -255,8 +264,20 @@ const Vote = (props) => {
                         </div>
                         :
                         <div>
-                            unavaiable
                     </div>
+            }
+            {
+                voterInfo && voterInfo.hasVoted && <DocumentCard
+                styles={cardStyles}
+                aria-label="Default Document Card"
+            >
+                <DocumentCardTitle
+                    title="Vote record"
+                    shouldTruncate
+                    type={DocumentCardType.compact}
+                />
+                <DocumentCardActivity shouldTruncate activity={new Date(parseInt(voterInfo["voteTimeStamp"])).toLocaleString()} people={[{ name: `${voterInfo["hkidHash"]}` }]} />
+            </DocumentCard>
             }
             <Dialog
                 hidden={hideDialog}
