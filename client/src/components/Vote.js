@@ -4,6 +4,9 @@ import * as tf from '@tensorflow/tfjs';
 import * as handpose from "@tensorflow-models/handpose";
 import * as fp from "fingerpose";
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
+import { useBoolean } from '@uifabric/react-hooks';
+import { Dialog, DialogType, DialogFooter } from 'office-ui-fabric-react/lib/Dialog';
+import { PrimaryButton, DefaultButton } from 'office-ui-fabric-react/lib/Button';
 import {
     DocumentCard,
     DocumentCardActivity,
@@ -27,6 +30,21 @@ const Vote = (props) => {
     const [valid, setValid] = useState(false);
     const [selectedCandidate, setSelectedCandidate] = useState();
     const [model, setModel] = useState();
+    const [hideDialog, { toggle: toggleHideDialog }] = useBoolean(true);
+    const [dialogContentProps, setdialogContentProps] = useState({
+        type: DialogType.normal,
+        title: 'Confirm voting transaction',
+        subText: 'loading',
+    })
+
+    useEffect(() => {
+        if(selectedCandidate) {
+            setdialogContentProps(prev=>({
+                ...prev,
+                subText: `vote to ${selectedCandidate.name}`
+            }))
+        }
+    }, [selectedCandidate])
 
     const videoError = (error) => {
         console.log("error", error);
@@ -61,12 +79,27 @@ const Vote = (props) => {
         if (model) {
             const handResult = await model.estimateHands(video.current, true);
             const GE = new fp.GestureEstimator([
-                fp.Gestures.VictoryGesture,
                 fp.Gestures.ThumbsUpGesture
             ]);
             if (handResult.length > 0) {
                 const estimatedGestures = GE.estimate(handResult[0].landmarks, 7.5);
                 console.log(estimatedGestures);
+                if (estimatedGestures) {
+                    const poseData = estimatedGestures.poseData;
+                    let allNoCurl = true;
+                    poseData.forEach(finger => {
+                        if (finger[1] !== "No Curl") {
+                            allNoCurl = false;
+                        }
+                    });
+                    if (allNoCurl) {
+                        selectNextCandidate();
+                    }
+                    const gestures = estimatedGestures.gestures;
+                    if (gestures.length > 0 && gestures[0].name === "thumbs_up") {
+                        toggleHideDialog();
+                    }
+                }
             }
         }
 
@@ -113,8 +146,10 @@ const Vote = (props) => {
     }
 
     const selectNextCandidate = () => {
-        const index = candidates.findIndex(candidate => candidate.candidateId === selectedCandidate.candidateId);
-        setSelectedCandidate(candidates[(index + 1) % candidates.length]);
+        setSelectedCandidate((prev) => {
+            const index = candidates.findIndex(candidate => candidate.candidateId === prev.candidateId);
+            return candidates[(index + 1) % candidates.length];
+        });
     }
 
     useEffect(() => {
@@ -134,14 +169,14 @@ const Vote = (props) => {
         getVoterInfo(electionInstance);
         getAllCandidates(electionInstance);
         navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia || navigator.oGetUserMedia;
-        if (navigator.getUserMedia) {
+        if (navigator.getUserMedia && video.current) {
             navigator.getUserMedia({ video: true }, handleVideo, videoError);
         }
     }, [electionInstance, account])
 
-    const voteTo = async (candidateId) => {
+    const voteTo = async () => {
         try {
-            await electionInstance.methods.vote(candidateId).send({ from: account });
+            await electionInstance.methods.vote(selectedCandidate.candidateId, hkid).send({ from: account });
             alert("Successfully vote");
             window.location.reload();
         } catch (error) {
@@ -157,6 +192,8 @@ const Vote = (props) => {
         },
         [],
     );
+
+
 
 
 
@@ -221,8 +258,23 @@ const Vote = (props) => {
                             unavaiable
                     </div>
             }
+            <Dialog
+                hidden={hideDialog}
+                onDismiss={toggleHideDialog}
+                dialogContentProps={dialogContentProps}
+                modalProps={modelProps}
+            >
+                <DialogFooter>
+                    <PrimaryButton onClick={voteTo} text="Vote" />
+                    <DefaultButton onClick={toggleHideDialog} text="Cancel" />
+                </DialogFooter>
+            </Dialog>
         </div>
     )
 }
+const modelProps = {
+    isBlocking: false,
+    styles: { main: { maxWidth: 450 } },
+};
 
 export default Vote
