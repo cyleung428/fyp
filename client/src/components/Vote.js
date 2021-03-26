@@ -135,7 +135,6 @@ const Vote = (props) => {
             let running = await electionInstance.methods.running().call();
             setRunning(running);
             setVoterInfo(voterInfo);
-            console.log(voterInfo);
         }
     }
 

@@ -9,6 +9,7 @@ const pageStyles = mergeStyles({
 export const Result = (props) => {
     const { account, electionInstance, isAdmin } = props;
     const [candidates, setCandidates] = useState([]);
+    const [running, setRunning] = useState(true);
     useEffect(() => {
         getAllCandidates(electionInstance);
     }, [electionInstance, isAdmin, account])
@@ -17,6 +18,8 @@ export const Result = (props) => {
         if (!electionInstance) {
             return [];
         } else {
+            let running = await electionInstance.methods.running().call();
+            setRunning(running);
             let candidates = [];
             const count = await electionInstance.methods.candidateCount().call();
             console.log(count);
@@ -37,7 +40,7 @@ export const Result = (props) => {
     ];
 
     return (
-        !isAdmin ?
+        !running ?
             <div className={pageStyles}>
                 <DetailsList
                     items={candidates}
@@ -47,7 +50,7 @@ export const Result = (props) => {
                 />
             </div> :
             <div>
-                Only admin can verify voters
+               Only avaiable when the election finish
             </div>
     );
 }
