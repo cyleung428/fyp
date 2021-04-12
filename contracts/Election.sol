@@ -15,7 +15,6 @@ contract Election {
         candidateCount = 3;
         voterCount = 0;
         running = false;
-        end = false;
         candidateDetails[0] =
             Candidate({
                 name: "candidate A",
@@ -34,7 +33,7 @@ contract Election {
     }
 
 
-
+ﬁ
     struct Candidate {
         string name;
         uint256 candidateId;
