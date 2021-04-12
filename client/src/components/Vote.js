@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import * as faceapi from '@vladmandic/face-api';
-import * as tf from '@tensorflow/tfjs';
+// import * as tf from '@tensorflow/tfjs';
 import * as handpose from "@tensorflow-models/handpose";
 import * as fp from "fingerpose";
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
@@ -23,7 +23,7 @@ const narrowTextFieldStyles = { fieldGroup: { width: 200 } };
 
 const cardStyles = {
     root: { marginRight: 20, width: 500, maxWidth: 500 },
-  };
+};
 
 const Vote = (props) => {
     const { account, electionInstance, isAdmin } = props;
@@ -43,8 +43,8 @@ const Vote = (props) => {
     })
 
     useEffect(() => {
-        if(selectedCandidate) {
-            setdialogContentProps(prev=>({
+        if (selectedCandidate) {
+            setdialogContentProps(prev => ({
                 ...prev,
                 subText: `vote to ${selectedCandidate.name}`
             }))
@@ -81,34 +81,6 @@ const Vote = (props) => {
             .detectAllFaces(video.current, options)
             .withFaceExpressions();
 
-        if (model) {
-            const handResult = await model.estimateHands(video.current, true);
-            const GE = new fp.GestureEstimator([
-                fp.Gestures.ThumbsUpGesture
-            ]);
-            if (handResult.length > 0) {
-                const estimatedGestures = GE.estimate(handResult[0].landmarks, 7.5);
-                console.log(estimatedGestures);
-                if (estimatedGestures) {
-                    const poseData = estimatedGestures.poseData;
-                    let allNoCurl = true;
-                    poseData.forEach(finger => {
-                        if (finger[1] !== "No Curl") {
-                            allNoCurl = false;
-                        }
-                    });
-                    if (allNoCurl) {
-                        selectNextCandidate();
-                    }
-                    const gestures = estimatedGestures.gestures;
-                    if (gestures.length > 0 && gestures[0].name === "thumbs_up") {
-                        toggleHideDialog();
-                    }
-                }
-            }
-        }
-
-
 
         if (result.length === 2) {
             const canvases = await faceapi.extractFaces(video.current, result.map(result => result.detection))
@@ -117,8 +89,35 @@ const Vote = (props) => {
             const distance = faceapi.utils.round(
                 faceapi.euclideanDistance(faceDes1, faceDes2)
             )
-            if (distance > 0.6) {
+            if (distance > 0.4) {
                 setValid(true);
+                const hand = await handpose.load()
+                if (hand) {
+                    const handResult = await hand.estimateHands(video.current, true);
+                    console.log(handResult);
+                    const GE = new fp.GestureEstimator([
+                        fp.Gestures.ThumbsUpGesture
+                    ]);
+                    if (handResult.length > 0) {
+                        const estimatedGestures = GE.estimate(handResult[0].landmarks, 5);
+                        if (estimatedGestures) {
+                            const poseData = estimatedGestures.poseData;
+                            let allNoCurl = true;
+                            poseData.forEach(finger => {
+                                if (finger[1] !== "No Curl") {
+                                    allNoCurl = false;
+                                }
+                            });
+                            if (allNoCurl) {
+                                selectNextCandidate();
+                            }
+                            const gestures = estimatedGestures.gestures;
+                            if (gestures.length > 0 && gestures[0].name === "thumbs_up") {
+                                toggleHideDialog();
+                            }
+                        }
+                    }
+                }
             } else {
                 setValid(false);
             }
@@ -206,7 +205,7 @@ const Vote = (props) => {
 
 
     return (
-        <div style={{ width: "100%", padding:"15px" }}>
+        <div style={{ width: "100%", padding: "15px" }}>
             {
                 isAdmin ?
                     <div>
@@ -237,7 +236,7 @@ const Vote = (props) => {
                                         <MessageBar
                                             messageBarType={MessageBarType.success}
                                         >
-                                            Biometric scanning test pass, you can show 👍 for selecting the candidate and ✌️ for switching candidte
+                                            Biometric scanning test pass, you can show 👍 for selecting the candidate and 🖐️ for switching candidte
                               </MessageBar>
                                     </>
                                     :
@@ -259,24 +258,26 @@ const Vote = (props) => {
                                 autoPlay
                                 muted
                                 onPlay={onPlay}
+                                width="480"
+                                height="360"
                             />
                         </div>
                         :
                         <div>
-                    </div>
+                        </div>
             }
             {
                 voterInfo && voterInfo.hasVoted && <DocumentCard
-                styles={cardStyles}
-                aria-label="Default Document Card"
-            >
-                <DocumentCardTitle
-                    title="Vote record"
-                    shouldTruncate
-                    type={DocumentCardType.compact}
-                />
-                <DocumentCardActivity shouldTruncate activity={new Date(parseInt(voterInfo["voteTimeStamp"])).toLocaleString()} people={[{ name: `${voterInfo["hkidHash"]}` }]} />
-            </DocumentCard>
+                    styles={cardStyles}
+                    aria-label="Default Document Card"
+                >
+                    <DocumentCardTitle
+                        title="Vote record"
+                        shouldTruncate
+                        type={DocumentCardType.compact}
+                    />
+                    <DocumentCardActivity shouldTruncate activity={new Date(parseInt(voterInfo["voteTimeStamp"])).toLocaleString()} people={[{ name: `${voterInfo["hkidHash"]}` }]} />
+                </DocumentCard>
             }
             <Dialog
                 hidden={hideDialog}

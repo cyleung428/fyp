@@ -8,7 +8,6 @@ contract Election {
     uint256 public candidateCount;
     uint256 public voterCount;
     bool public running;
-    bool public end;
 
     // Constructor
     constructor() public {
@@ -44,7 +43,7 @@ contract Election {
     mapping(uint256 => uint) voteCountMap;
 
     function getVoteCount(uint id) public view returns (uint) {
-        // require(end);
+        require(!running);
         return voteCountMap[id];
     }
 
@@ -86,7 +85,6 @@ contract Election {
         require(msg.sender == admin);
         require(running == true);
         running = false;
-        end = true;
     }
 
 }
