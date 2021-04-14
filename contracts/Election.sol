@@ -31,9 +31,6 @@ contract Election {
                 candidateId: 2
             });
     }
-
-
-ﬁ
     struct Candidate {
         string name;
         uint256 candidateId;
