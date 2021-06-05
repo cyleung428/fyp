@@ -22,7 +22,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 Installs libraries:
 
 ```shell
-cd scrum-poker
+cd client
 npm i
 ```
 
